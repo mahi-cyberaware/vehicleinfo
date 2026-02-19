@@ -1,0 +1,14 @@
+# Environment variables
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Output reports
+reports/
+*.txt
+
+# Other
+.vscode/
+.DS_Store
