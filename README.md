@@ -4,7 +4,9 @@ A powerful command-line tool to fetch vehicle details using Indian registration 
 
 **Tool by:** MAHI-CYBERAWARE  
 **GitHub:** [mahi-cyberaware/vehicleinfo](https://github.com/mahi-cyberaware/vehicleinfo)
+## Screenshot
 
+![VehicleInfo in action](Resultvehicleinfos.png)
 ## Features
 - ✅ Validates Indian vehicle number format (e.g., MH02FB2727)
 - ✅ Fetches real data
