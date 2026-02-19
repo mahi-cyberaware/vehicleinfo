@@ -6,6 +6,7 @@
 ===============================================
 Fetches vehicle details using RapidAPI (vehicle-rc-information-v2).
 Supports saving output to file with --save flag.
+Reports folder is created automatically at startup.
 """
 
 import os
@@ -18,7 +19,7 @@ from datetime import datetime
 # ===== CONFIG =====
 RAPIDAPI_HOST = "vehicle-rc-information-v2.p.rapidapi.com"
 API_ENDPOINT = "/"
-REPORTS_DIR = "reports"          # Folder where output files will be saved
+REPORTS_DIR = "reports"
 # ==================
 
 # ===== MANUAL .ENV LOADER =====
@@ -37,12 +38,12 @@ RAPIDAPI_KEY = os.environ.get("RAPIDAPI_KEY")
 
 # ===== BANNER =====
 def show_banner():
-    print("\033[1;36m")  # Cyan bold
+    print("\033[1;36m")
     print("╔══════════════════════════════════════════╗")
     print("║         VEHICLEINFO - RTO LOOKUP        ║")
     print("║          Tool by: MAHI-CYBERAWARE       ║")
     print("╚══════════════════════════════════════════╝")
-    print("\033[0m")  # Reset
+    print("\033[0m")
 
 # ===== VALIDATION =====
 def validate_vehicle_number(number):
@@ -103,7 +104,6 @@ def extract_vehicle_data(api_response):
 
 # ===== DISPLAY =====
 def format_vehicle_text(vehicle_data, source="Live API"):
-    """Return a formatted string of vehicle details (for display and saving)."""
     lines = []
     lines.append("═" * 56)
     lines.append(f"🔍 VEHICLE DETAILS [Source: {source}]")
@@ -169,17 +169,10 @@ def format_vehicle_text(vehicle_data, source="Live API"):
     return "\n".join(lines)
 
 def display_info(vehicle_data, source="Live API"):
-    """Print the formatted info to console."""
     print("\n" + format_vehicle_text(vehicle_data, source))
 
 # ===== SAVE TO FILE =====
 def save_to_file(vehicle_no, content):
-    """Save content to a timestamped file in reports/ directory."""
-    # Create reports directory if it doesn't exist
-    if not os.path.exists(REPORTS_DIR):
-        os.makedirs(REPORTS_DIR)
-        print(f"📁 Created directory: {REPORTS_DIR}/")
-
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"vehicle_{vehicle_no}_{timestamp}.txt"
     filepath = os.path.join(REPORTS_DIR, filename)
@@ -200,15 +193,18 @@ def main():
         print("Please create a .env file with your key (see .env.example).")
         sys.exit(1)
 
+    # Ensure reports directory exists (even if not saving now)
+    if not os.path.exists(REPORTS_DIR):
+        os.makedirs(REPORTS_DIR)
+        print(f"📁 Created directory: {REPORTS_DIR}/")
+
     # Parse arguments
     save_output = False
     vehicle_no = None
 
-    # Simple argument parsing
     args = sys.argv[1:]
     if "-s" in args or "--save" in args:
         save_output = True
-        # Remove the flag from args list to find vehicle number
         args = [arg for arg in args if arg not in ("-s", "--save")]
 
     if len(args) > 0:
@@ -245,7 +241,6 @@ def main():
 
     # Save to file if requested
     if save_output:
-        # Include a header with timestamp and source info
         full_output = f"VEHICLEINFO Report\nGenerated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\nVehicle: {vehicle_no.upper()}\nSource: {source_type}\n\n{output_text}"
         save_to_file(vehicle_no, full_output)
 
